@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/kafka-poc/src",
+  "compilerOptions": {
+    "deleteOutDir": true,
+    "webpack": false,
+    "tsConfigPath": "./tsconfig.json"
+  },
+  "monorepo": true,
+  "root": "apps/content-service",
+  "projects": {
+    "content-service": {
+      "type": "application",
+      "root": "apps/content-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/content-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/content-service/tsconfig.app.json"
+      }
+    },
+    "transcoding-service": {
+      "type": "application",
+      "root": "apps/transcoding-service",
+      "entryFile": "main",
+      "sourceRoot": "apps/transcoding-service/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/transcoding-service/tsconfig.app.json"
+      }
+    }
+  }
+}
