@@ -2,22 +2,32 @@ version: '3'
 
 services:
   content-service:
-    container_name: "content-management-service"
+    container_name: content-management-service
     image: content-service
+    build:
+      context: .
+      dockerfile: ./apps/content-service/Dockerfile
     depends_on:
       - kafka
     env_file:
       - ./apps/content-service/.env.example
     ports:
       - "3000:3000"
+    networks:
+      - kafka_network
 
   transcoding-service:
-    container_name: "transcoding-service"
+    container_name: transcoding-service
     image: transcoding-service
+    build:
+      context: .
+      dockerfile: ./apps/transcoding-service/Dockerfile
     depends_on:
       - kafka
     env_file:
       - ./apps/transcoding-service/.env.example
+    networks:
+      - kafka_network
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
@@ -27,6 +37,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - kafka_network
 
   kafka:
     image: confluentinc/cp-kafka:7.6.0
@@ -36,8 +48,16 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_LISTENERS: PLAINTEXT_HOST://0.0.0.0:9092,PLAINTEXT_DOCKER://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT_HOST://localhost:9092,PLAINTEXT_DOCKER://kafka:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT_HOST:PLAINTEXT,PLAINTEXT_DOCKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_DOCKER
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+    networks:
+      - kafka_network
+
+networks:
+  kafka_network:
+    driver: bridge

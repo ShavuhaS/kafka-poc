@@ -23,9 +23,11 @@ RUN corepack enable && corepack prepare yarn@4.3.1
 COPY --from=builder /app/yarn.lock ./yarn.lock
 COPY --from=builder /app/.yarn /app/.yarn
 COPY --from=builder /app/node_modules /app/node_modules
-COPY --from=builder /app/dist /app/dist
+COPY --from=builder /app/dist/apps/transcoding-service /app/dist
 COPY --from=builder /app/package.json ./package.json
+
+WORKDIR /app/dist/apps/transcoding-service
 
 ENV NODE_ENV=production
 
-CMD ["node", "dist/apps/transcoding-service/main"]
+CMD ["node", "src/main.js"]

@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ContentController } from './content.controller';
 import { ContentService } from './content.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { kafkaConfig } from '../../../lib/config';
+import { kafkaConfig } from '@app/common/config';
 
 @Module({
   imports: [
@@ -10,9 +10,9 @@ import { kafkaConfig } from '../../../lib/config';
       {
         name: 'KAFKA',
         transport: Transport.KAFKA,
-        options: kafkaConfig('content-service'),
+        options: kafkaConfig('content'),
       },
-    ])
+    ]),
   ],
   controllers: [ContentController],
   providers: [ContentService],

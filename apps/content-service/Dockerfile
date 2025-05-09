@@ -23,12 +23,14 @@ RUN corepack enable && corepack prepare yarn@4.3.1
 COPY --from=builder /app/yarn.lock ./yarn.lock
 COPY --from=builder /app/.yarn /app/.yarn
 COPY --from=builder /app/node_modules /app/node_modules
-COPY --from=builder /app/dist /app/dist
+COPY --from=builder /app/dist/apps/content-service /app/dist
 COPY --from=builder /app/package.json ./package.json
+
+WORKDIR /app/dist/apps/content-service
 
 ARG PORT=3000
 ENV PORT=${PORT}
 ENV NODE_ENV=production
 EXPOSE ${PORT}
 
-CMD ["node", "dist/apps/content-service/main"]
+CMD ["node", "src/main.js"]
